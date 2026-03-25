@@ -1,0 +1,30 @@
+# Dependencies
+node_modules/
+
+# Environment variables — NEVER commit these
+.env
+.env.local
+.env.production
+
+# Build output
+dist/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+
+# Claude Code memory (personal notes, not project code)
+.claude/memory/
+
+# Raw skill/template files dropped in root
+SKILL.md
+"SKILL (1).md"
+SKILL\ \(1\).md
+
+# Large media files (use Git LFS or external storage)
+frames/
+*.mp4
