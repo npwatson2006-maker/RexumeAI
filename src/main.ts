@@ -5,7 +5,7 @@
  * to Supabase sign-up / login flows.
  */
 
-import { signUp, signIn, signOut, onAuthStateChange, getSession } from './lib/supabase/auth';
+import { signUp, signIn, signOut, onAuthStateChange, getSession, sendPasswordResetEmail, updatePassword } from './lib/supabase/auth';
 
 // ─────────────────────────────────────────────────────────────
 //  Types
@@ -33,30 +33,68 @@ function createAuthModal(): void {
         <span>RexumeAI</span>
       </div>
 
-      <h2 id="auth-title" class="auth-title">Create your account</h2>
-      <p class="auth-subtitle">Start optimizing your resume with AI</p>
+      <!-- ── Main view: signup / login ── -->
+      <div id="auth-main-view">
+        <h2 id="auth-title" class="auth-title">Create your account</h2>
+        <p class="auth-subtitle">Start optimizing your resume with AI</p>
 
-      <form id="auth-form" novalidate>
-        <div class="auth-field" id="field-fullname">
-          <label for="auth-fullname">Full name</label>
-          <input id="auth-fullname" name="fullname" type="text" placeholder="Jane Smith" autocomplete="name" />
-        </div>
-        <div class="auth-field">
-          <label for="auth-email">Email</label>
-          <input id="auth-email" name="email" type="email" placeholder="you@university.edu" autocomplete="email" required />
-        </div>
-        <div class="auth-field">
-          <label for="auth-password">Password</label>
-          <input id="auth-password" name="password" type="password" placeholder="At least 8 characters" autocomplete="new-password" required />
-        </div>
-        <p class="auth-error" id="auth-error" hidden></p>
-        <button type="submit" class="auth-submit" id="auth-submit-btn">Get started free</button>
-      </form>
+        <form id="auth-form" novalidate>
+          <div class="auth-field" id="field-fullname">
+            <label for="auth-fullname">Full name</label>
+            <input id="auth-fullname" name="fullname" type="text" placeholder="Jane Smith" autocomplete="name" />
+          </div>
+          <div class="auth-field">
+            <label for="auth-email">Email</label>
+            <input id="auth-email" name="email" type="email" placeholder="you@university.edu" autocomplete="email" required />
+          </div>
+          <div class="auth-field">
+            <label for="auth-password">Password</label>
+            <input id="auth-password" name="password" type="password" placeholder="At least 8 characters" autocomplete="new-password" required />
+          </div>
+          <div class="auth-forgot-wrap" id="auth-forgot-wrap" style="display:none">
+            <button type="button" id="auth-forgot-link" class="auth-forgot-link">Forgot password?</button>
+          </div>
+          <p class="auth-error" id="auth-error" hidden></p>
+          <button type="submit" class="auth-submit" id="auth-submit-btn">Get started free</button>
+        </form>
 
-      <p class="auth-toggle">
-        Already have an account?
-        <button type="button" id="auth-mode-toggle">Sign in</button>
-      </p>
+        <p class="auth-toggle">
+          Already have an account?
+          <button type="button" id="auth-mode-toggle">Sign in</button>
+        </p>
+      </div>
+
+      <!-- ── Forgot password view ── -->
+      <div id="auth-forgot-view" style="display:none">
+        <h2 class="auth-title">Reset password</h2>
+        <p class="auth-subtitle">Enter your email and we'll send you a reset link.</p>
+        <form id="auth-forgot-form" novalidate>
+          <div class="auth-field">
+            <label for="forgot-email">Email</label>
+            <input id="forgot-email" type="email" placeholder="you@university.edu" autocomplete="email" required />
+          </div>
+          <p class="auth-error" id="forgot-error" hidden></p>
+          <button type="submit" class="auth-submit" id="forgot-submit-btn">Send reset email</button>
+        </form>
+        <p class="auth-toggle">
+          <button type="button" id="auth-back-to-login">← Back to sign in</button>
+        </p>
+      </div>
+
+      <!-- ── Reset password view (after clicking email link) ── -->
+      <div id="auth-reset-view" style="display:none">
+        <h2 class="auth-title">Set new password</h2>
+        <p class="auth-subtitle">Choose a strong new password for your account.</p>
+        <form id="auth-reset-form" novalidate>
+          <div class="auth-field">
+            <label for="reset-password">New password</label>
+            <input id="reset-password" type="password" placeholder="At least 8 characters" autocomplete="new-password" required />
+          </div>
+          <p class="auth-error" id="reset-error" hidden></p>
+          <button type="submit" class="auth-submit" id="reset-submit-btn">Set new password</button>
+        </form>
+      </div>
+
     </div>
   `;
   document.body.appendChild(modal);
@@ -111,21 +149,45 @@ function injectAuthStyles(): void {
     .auth-toggle button { background: none; border: none; color: #7CA491; cursor: pointer; font-size: inherit; text-decoration: underline; }
     .auth-success { text-align: center; padding: 1rem 0; }
     .auth-success h3 { color: #7CA491; margin-bottom: 0.5rem; }
+    .auth-forgot-wrap { text-align: right; margin-top: -0.25rem; margin-bottom: 0.75rem; }
+    .auth-forgot-link { background: none; border: none; color: #7CA491; cursor: pointer; font-size: 0.82rem; text-decoration: underline; padding: 0; }
+    .auth-forgot-link:hover { color: #a8c5b8; }
   `;
   document.head.appendChild(style);
 }
 
+function showAuthView(modal: HTMLElement, view: 'main' | 'forgot' | 'reset'): void {
+  modal.querySelector<HTMLElement>('#auth-main-view')!.style.display   = view === 'main'   ? '' : 'none';
+  modal.querySelector<HTMLElement>('#auth-forgot-view')!.style.display = view === 'forgot' ? '' : 'none';
+  modal.querySelector<HTMLElement>('#auth-reset-view')!.style.display  = view === 'reset'  ? '' : 'none';
+}
+
 function bindAuthModalEvents(modal: HTMLElement): void {
   const state: AuthModalState = { mode: 'signup' };
-  const form = modal.querySelector<HTMLFormElement>('#auth-form')!;
-  const errorEl = modal.querySelector<HTMLElement>('#auth-error')!;
-  const submitBtn = modal.querySelector<HTMLButtonElement>('#auth-submit-btn')!;
-  const modeToggle = modal.querySelector<HTMLButtonElement>('#auth-mode-toggle')!;
-  const titleEl = modal.querySelector<HTMLElement>('#auth-title')!;
-  const subtitleEl = modal.querySelector<HTMLElement>('.auth-subtitle')!;
+
+  // ── Main view elements ──
+  const form          = modal.querySelector<HTMLFormElement>('#auth-form')!;
+  const errorEl       = modal.querySelector<HTMLElement>('#auth-error')!;
+  const submitBtn     = modal.querySelector<HTMLButtonElement>('#auth-submit-btn')!;
+  const modeToggle    = modal.querySelector<HTMLButtonElement>('#auth-mode-toggle')!;
+  const titleEl       = modal.querySelector<HTMLElement>('#auth-title')!;
+  const subtitleEl    = modal.querySelector<HTMLElement>('#auth-main-view .auth-subtitle')!;
   const fullnameField = modal.querySelector<HTMLElement>('#field-fullname')!;
-  const backdrop = modal.querySelector<HTMLElement>('.auth-backdrop')!;
-  const closeBtn = modal.querySelector<HTMLButtonElement>('.auth-close')!;
+  const forgotWrap    = modal.querySelector<HTMLElement>('#auth-forgot-wrap')!;
+  const forgotLink    = modal.querySelector<HTMLButtonElement>('#auth-forgot-link')!;
+  const backdrop      = modal.querySelector<HTMLElement>('.auth-backdrop')!;
+  const closeBtn      = modal.querySelector<HTMLButtonElement>('.auth-close')!;
+
+  // ── Forgot-password view elements ──
+  const forgotForm      = modal.querySelector<HTMLFormElement>('#auth-forgot-form')!;
+  const forgotErrorEl   = modal.querySelector<HTMLElement>('#forgot-error')!;
+  const forgotSubmitBtn = modal.querySelector<HTMLButtonElement>('#forgot-submit-btn')!;
+  const backToLogin     = modal.querySelector<HTMLButtonElement>('#auth-back-to-login')!;
+
+  // ── Reset-password view elements ──
+  const resetForm      = modal.querySelector<HTMLFormElement>('#auth-reset-form')!;
+  const resetErrorEl   = modal.querySelector<HTMLElement>('#reset-error')!;
+  const resetSubmitBtn = modal.querySelector<HTMLButtonElement>('#reset-submit-btn')!;
 
   // Close handlers
   backdrop.addEventListener('click', closeAuthModal);
@@ -135,16 +197,29 @@ function bindAuthModalEvents(modal: HTMLElement): void {
   // Toggle between sign-up and login
   modeToggle.addEventListener('click', () => {
     state.mode = state.mode === 'signup' ? 'login' : 'signup';
-    updateModalMode(state.mode, { titleEl, subtitleEl, fullnameField, modeToggle, submitBtn });
+    updateModalMode(state.mode, { titleEl, subtitleEl, fullnameField, forgotWrap, modeToggle, submitBtn });
     clearError(errorEl);
   });
 
-  // Form submission
+  // Forgot password link → show forgot view
+  forgotLink.addEventListener('click', () => {
+    showAuthView(modal, 'forgot');
+    clearError(forgotErrorEl);
+  });
+
+  // Back to login from forgot view
+  backToLogin.addEventListener('click', () => {
+    showAuthView(modal, 'main');
+    state.mode = 'login';
+    updateModalMode('login', { titleEl, subtitleEl, fullnameField, forgotWrap, modeToggle, submitBtn });
+  });
+
+  // Main form submission (signup / login)
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
     clearError(errorEl);
 
-    const email = (modal.querySelector<HTMLInputElement>('#auth-email')!).value.trim();
+    const email    = (modal.querySelector<HTMLInputElement>('#auth-email')!).value.trim();
     const password = (modal.querySelector<HTMLInputElement>('#auth-password')!).value;
     const fullName = (modal.querySelector<HTMLInputElement>('#auth-fullname')!).value.trim();
 
@@ -172,16 +247,63 @@ function bindAuthModalEvents(modal: HTMLElement): void {
       submitBtn.textContent = state.mode === 'signup' ? 'Get started free' : 'Sign in';
     }
   });
+
+  // Forgot password form submission
+  forgotForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    clearError(forgotErrorEl);
+
+    const email = (modal.querySelector<HTMLInputElement>('#forgot-email')!).value.trim();
+    if (!email) { showError(forgotErrorEl, 'Please enter your email.'); return; }
+
+    forgotSubmitBtn.disabled = true;
+    forgotSubmitBtn.textContent = 'Sending…';
+
+    try {
+      const { error } = await sendPasswordResetEmail(email);
+      if (error) { showError(forgotErrorEl, error.message); return; }
+      showSuccess(forgotForm, 'Check your email for a password reset link.');
+    } finally {
+      forgotSubmitBtn.disabled = false;
+      forgotSubmitBtn.textContent = 'Send reset email';
+    }
+  });
+
+  // Reset password form submission
+  resetForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    clearError(resetErrorEl);
+
+    const newPassword = (modal.querySelector<HTMLInputElement>('#reset-password')!).value;
+    if (!newPassword || newPassword.length < 8) {
+      showError(resetErrorEl, 'Password must be at least 8 characters.');
+      return;
+    }
+
+    resetSubmitBtn.disabled = true;
+    resetSubmitBtn.textContent = 'Saving…';
+
+    try {
+      const { error } = await updatePassword(newPassword);
+      if (error) { showError(resetErrorEl, error.message); return; }
+      showSuccess(resetForm, 'Password updated! Redirecting…');
+      setTimeout(() => { window.location.href = '/dashboard.html'; }, 1500);
+    } finally {
+      resetSubmitBtn.disabled = false;
+      resetSubmitBtn.textContent = 'Set new password';
+    }
+  });
 }
 
 function updateModalMode(
   mode: 'signup' | 'login',
-  els: { titleEl: HTMLElement; subtitleEl: HTMLElement; fullnameField: HTMLElement; modeToggle: HTMLButtonElement; submitBtn: HTMLButtonElement }
+  els: { titleEl: HTMLElement; subtitleEl: HTMLElement; fullnameField: HTMLElement; forgotWrap: HTMLElement; modeToggle: HTMLButtonElement; submitBtn: HTMLButtonElement }
 ): void {
   if (mode === 'login') {
     els.titleEl.textContent = 'Welcome back';
     els.subtitleEl.textContent = 'Sign in to your RexumeAI account';
     els.fullnameField.style.display = 'none';
+    els.forgotWrap.style.display = '';
     els.submitBtn.textContent = 'Sign in';
     els.modeToggle.textContent = 'Create an account';
     els.modeToggle.previousSibling!.textContent = "Don't have an account? ";
@@ -189,6 +311,7 @@ function updateModalMode(
     els.titleEl.textContent = 'Create your account';
     els.subtitleEl.textContent = 'Start optimizing your resume with AI';
     els.fullnameField.style.display = '';
+    els.forgotWrap.style.display = 'none';
     els.submitBtn.textContent = 'Get started free';
     els.modeToggle.textContent = 'Sign in';
     els.modeToggle.previousSibling!.textContent = 'Already have an account? ';
@@ -209,17 +332,24 @@ function showSuccess(form: HTMLFormElement, msg: string): void {
   form.innerHTML = `<div class="auth-success"><h3>You're in! 🎉</h3><p>${msg}</p></div>`;
 }
 
-export function openAuthModal(mode: 'signup' | 'login' = 'signup'): void {
+export function openAuthModal(mode: 'signup' | 'login' | 'reset' = 'signup'): void {
   const modal = document.getElementById('auth-modal')!;
   modal.classList.add('open');
-  // Set initial mode
+
+  if (mode === 'reset') {
+    showAuthView(modal, 'reset');
+    return;
+  }
+
+  showAuthView(modal, 'main');
   const modeToggle = modal.querySelector<HTMLButtonElement>('#auth-mode-toggle')!;
   if (modeToggle) {
-    const titleEl = modal.querySelector<HTMLElement>('#auth-title')!;
-    const subtitleEl = modal.querySelector<HTMLElement>('.auth-subtitle')!;
+    const titleEl       = modal.querySelector<HTMLElement>('#auth-title')!;
+    const subtitleEl    = modal.querySelector<HTMLElement>('#auth-main-view .auth-subtitle')!;
     const fullnameField = modal.querySelector<HTMLElement>('#field-fullname')!;
-    const submitBtn = modal.querySelector<HTMLButtonElement>('#auth-submit-btn')!;
-    updateModalMode(mode, { titleEl, subtitleEl, fullnameField, modeToggle, submitBtn });
+    const forgotWrap    = modal.querySelector<HTMLElement>('#auth-forgot-wrap')!;
+    const submitBtn     = modal.querySelector<HTMLButtonElement>('#auth-submit-btn')!;
+    updateModalMode(mode, { titleEl, subtitleEl, fullnameField, forgotWrap, modeToggle, submitBtn });
   }
 }
 
@@ -275,6 +405,9 @@ async function init(): Promise<void> {
   onAuthStateChange((event) => {
     if (event === 'SIGNED_IN') {
       window.location.href = '/dashboard.html';
+    }
+    if (event === 'PASSWORD_RECOVERY') {
+      openAuthModal('reset');
     }
     if (event === 'SIGNED_OUT') updateNavForGuest();
   });
