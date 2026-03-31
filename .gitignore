@@ -26,5 +26,5 @@ SKILL.md
 SKILL\ \(1\).md
 
 # Large media files (use Git LFS or external storage)
-frames/
+/frames/
 *.mp4
