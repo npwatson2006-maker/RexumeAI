@@ -14,6 +14,7 @@ import type {
   ResumeUpdate,
   AiSessionInsert,
   AiSessionRow,
+  AiSessionType,
 } from './types';
 
 // ─────────────────────────────────────────────────────────────
@@ -161,6 +162,41 @@ export async function getAiSessions(
   };
 }
 
+/** Get AI sessions for a user filtered by session type, optionally by resume */
+export async function getAiSessionsByType(
+  userId: string,
+  sessionType: AiSessionType,
+  resumeId?: string
+): Promise<{ data: AiSessionRow[]; error: string | null }> {
+  let query = supabase
+    .from('ai_sessions')
+    .select('*')
+    .eq('user_id', userId)
+    .eq('session_type', sessionType)
+    .order('created_at', { ascending: false });
+
+  if (resumeId) {
+    query = query.eq('resume_id', resumeId);
+  }
+
+  const { data, error } = await query;
+
+  return {
+    data: data ?? [],
+    error: error ? error.message : null,
+  };
+}
+
+/** Delete an AI session by ID */
+export async function deleteAiSession(id: string): Promise<{ error: string | null }> {
+  const { error } = await supabase
+    .from('ai_sessions')
+    .delete()
+    .eq('id', id);
+
+  return { error: error ? error.message : null };
+}
+
 // ─────────────────────────────────────────────────────────────
 //  Real-time subscriptions
 // ─────────────────────────────────────────────────────────────
@@ -192,4 +228,32 @@ export function subscribeToResumes(
     .subscribe();
 
   return () => supabase.removeChannel(channel);
+}
+
+// ─────────────────────────────────────────────────────────────
+//  Supabase Storage helpers (resumes bucket)
+// ─────────────────────────────────────────────────────────────
+
+/** Delete a file from the private resumes storage bucket */
+export async function deleteResumeFile(
+  storagePath: string  // e.g. "{user_id}/{timestamp}_{filename}"
+): Promise<{ error: string | null }> {
+  const { error } = await supabase.storage
+    .from('resumes')
+    .remove([storagePath]);
+  return { error: error ? error.message : null };
+}
+
+/** Get a short-lived signed URL for a private resume file */
+export async function getResumeSignedUrl(
+  storagePath: string,
+  expiresIn = 3600  // seconds
+): Promise<{ url: string | null; error: string | null }> {
+  const { data, error } = await supabase.storage
+    .from('resumes')
+    .createSignedUrl(storagePath, expiresIn);
+  return {
+    url: data?.signedUrl ?? null,
+    error: error ? error.message : null,
+  };
 }

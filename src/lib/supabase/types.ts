@@ -11,11 +11,12 @@
 // ─────────────────────────────────────────────────────────────
 
 export interface ProfileRow {
-  user_id: string;           // uuid — references auth.users(id)
+  user_id: string;               // uuid — references auth.users(id)
   email: string;
   full_name: string | null;
   avatar_url: string | null;
-  created_at: string;        // ISO 8601 timestamp
+  has_dismissed_welcome: boolean; // tracks if user closed the onboarding card
+  created_at: string;            // ISO 8601 timestamp
   updated_at: string;
 }
 
@@ -58,6 +59,99 @@ export type AiSessionInsert = Omit<AiSessionRow, 'id' | 'created_at'>;
 export type ProfileUpdate = Partial<Omit<ProfileRow, 'user_id' | 'created_at'>>;
 
 export type ResumeUpdate = Partial<Omit<ResumeRow, 'id' | 'user_id' | 'created_at'>>;
+
+// ─────────────────────────────────────────────────────────────
+//  Database type  (used to type the Supabase client)
+// ─────────────────────────────────────────────────────────────
+
+// ─────────────────────────────────────────────────────────────
+//  ParsedResume — structured output from the AI parsing step
+//  Stored in resumes.parsed_content (JSONB)
+// ─────────────────────────────────────────────────────────────
+
+export interface ParsedResumeExperience {
+  company: string;
+  title: string;
+  start_date: string;
+  end_date: string;           // use "Present" if current role
+  description: string;        // bullet points as a single string
+  location: string | null;
+}
+
+export interface ParsedResumeEducation {
+  institution: string;
+  degree: string;
+  field_of_study: string | null;
+  start_date: string | null;
+  end_date: string | null;
+  gpa: string | null;
+}
+
+export interface ParsedResumeCertification {
+  name: string;
+  issuer: string | null;
+  date: string | null;
+}
+
+export interface ParsedResumeProject {
+  name: string;
+  description: string;
+  url: string | null;
+}
+
+export interface ParsedResume {
+  full_name: string;
+  email: string | null;
+  phone: string | null;
+  location: string | null;
+  linkedin: string | null;
+  website: string | null;
+  summary: string | null;
+  experience: ParsedResumeExperience[];
+  education: ParsedResumeEducation[];
+  skills: string[];
+  certifications: ParsedResumeCertification[];
+  languages: string[];
+  projects: ParsedResumeProject[];
+}
+
+// ─────────────────────────────────────────────────────────────
+//  ReviewResult — structured output from the AI review step
+//  Stored in ai_sessions.output_data (JSONB)
+// ─────────────────────────────────────────────────────────────
+
+export interface ReviewAnnotation {
+  section: string;       // 'experience' | 'education' | 'skills' | 'summary' etc.
+  item_index: number;    // 0-based index within section
+  field: string;         // 'description' | 'title' | 'summary' etc.
+  rating: 'strong' | 'okay' | 'weak';
+  comment: string;
+}
+
+export interface ReviewCategory {
+  score: number;
+  feedback: string;
+  suggestions: string[];
+  missing_keywords?: string[];
+  weak_verbs_found?: string[];
+  bullets_without_metrics?: string[];
+}
+
+export interface ReviewResult {
+  overall_score: number;
+  summary: string;
+  categories: {
+    content_strength: ReviewCategory;
+    formatting_structure: ReviewCategory;
+    keywords_ats: ReviewCategory;
+    grammar_clarity: ReviewCategory;
+    impact_action_verbs: ReviewCategory;
+    bullet_point_strength: ReviewCategory;
+  };
+  annotations: ReviewAnnotation[];
+  top_strengths: string[];
+  top_improvements: string[];
+}
 
 // ─────────────────────────────────────────────────────────────
 //  Database type  (used to type the Supabase client)

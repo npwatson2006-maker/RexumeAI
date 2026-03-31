@@ -264,14 +264,18 @@ async function init(): Promise<void> {
   // Check if user is already logged in
   const { session } = await getSession();
   if (session) {
-    updateNavForLoggedInUser();
+    // Already authenticated — send them straight to the dashboard
+    window.location.href = '/dashboard.html';
+    return;
   } else {
     updateNavForGuest();
   }
 
   // React to future login/logout events
   onAuthStateChange((event) => {
-    if (event === 'SIGNED_IN') updateNavForLoggedInUser();
+    if (event === 'SIGNED_IN') {
+      window.location.href = '/dashboard.html';
+    }
     if (event === 'SIGNED_OUT') updateNavForGuest();
   });
 
