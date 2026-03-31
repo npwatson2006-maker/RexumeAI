@@ -179,8 +179,8 @@ export interface Database {
         Relationships: [];
       };
     };
-    Views: Record<string, never>;
-    Functions: Record<string, never>;
+    Views: {};
+    Functions: {};
     Enums: {
       ai_session_type: AiSessionType;
     };

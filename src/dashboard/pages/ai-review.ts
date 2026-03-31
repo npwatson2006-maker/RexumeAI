@@ -20,7 +20,6 @@ interface ReviewState {
   sessions: AiSessionRow[];
   activeSession: AiSessionRow | null;
   result: ReviewResult | null;
-  accessToken: string;
 }
 
 const state: ReviewState = {
@@ -29,7 +28,6 @@ const state: ReviewState = {
   sessions: [],
   activeSession: null,
   result: null,
-  accessToken: '',
 };
 
 let rootContainer: HTMLElement;
@@ -47,9 +45,6 @@ export async function renderAiReview(container: HTMLElement, user: User): Promis
   state.sessions = [];
   state.activeSession = null;
   state.result = null;
-
-  const { data: { session } } = await supabase.auth.getSession();
-  state.accessToken = session?.access_token ?? '';
 
   await renderPicker();
 }
@@ -220,7 +215,6 @@ async function startProcessing(): Promise<void> {
     // Call edge function
     const { data: fnResult, error: fnError } = await supabase.functions.invoke('review-resume', {
       body: { resume_id: state.selected.id },
-      headers: state.accessToken ? { Authorization: `Bearer ${state.accessToken}` } : {},
     });
 
     let result: ReviewResult | null = null;
