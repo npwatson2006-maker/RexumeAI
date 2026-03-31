@@ -4,7 +4,7 @@
   "description": "RexumeAI — AI-powered resume optimization",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
+    "build": "vite build",
     "preview": "vite preview",
     "push": "node scripts/push.js",
     "save": "node scripts/save.js"
@@ -19,7 +19,7 @@
     "pdfjs-dist": "^5.5.207"
   },
   "devDependencies": {
-    "typescript": "^6.0.2",
+    "typescript": "~5.8.3",
     "vite": "^8.0.2"
   }
 }

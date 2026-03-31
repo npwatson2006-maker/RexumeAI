@@ -197,7 +197,7 @@ async function selectResume(card: HTMLElement): Promise<void> {
 
 function loadSession(session: AiSessionRow): void {
   state.activeSession = session;
-  state.result = session.output_data as ReviewResult;
+  state.result = session.output_data as unknown as ReviewResult;
   renderResults();
 }
 

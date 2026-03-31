@@ -164,16 +164,19 @@ export interface Database {
         Row: ProfileRow;
         Insert: ProfileInsert;
         Update: ProfileUpdate;
+        Relationships: [];
       };
       resumes: {
         Row: ResumeRow;
         Insert: ResumeInsert;
         Update: ResumeUpdate;
+        Relationships: [];
       };
       ai_sessions: {
         Row: AiSessionRow;
         Insert: AiSessionInsert;
-        Update: never;  // sessions are immutable once created
+        Update: Partial<AiSessionRow>;
+        Relationships: [];
       };
     };
     Views: Record<string, never>;

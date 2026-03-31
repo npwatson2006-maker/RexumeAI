@@ -42,6 +42,7 @@ export async function signUp({ email, password, fullName }: SignUpParams) {
     email,
     full_name: fullName,
     avatar_url: null,
+    has_dismissed_welcome: false,
   };
 
   const { error: profileError } = await supabase

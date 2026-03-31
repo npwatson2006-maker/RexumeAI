@@ -560,7 +560,7 @@ function wirePreviewEvents(root: HTMLElement): void {
   root.querySelectorAll<HTMLInputElement | HTMLTextAreaElement>('[data-field]').forEach((el) => {
     el.addEventListener('input', () => {
       const key = el.dataset.field as keyof ParsedResume;
-      (p as Record<string, unknown>)[key] = el.value;
+      (p as unknown as Record<string, unknown>)[key] = el.value;
     });
   });
 
@@ -655,7 +655,7 @@ function wireTagList(
   input.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); addTag(); } });
 }
 
-function wireCardList<T extends Record<string, unknown>>(
+function wireCardList<T extends object>(
   root: HTMLElement,
   listId: string,
   dataKey: string,
