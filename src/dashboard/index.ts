@@ -15,6 +15,7 @@ import { renderAiTools } from './pages/ai-tools';
 import { renderAiReview } from './pages/ai-review';
 import { renderAiRewrite } from './pages/ai-rewrite';
 import { renderAiTailor } from './pages/ai-tailor';
+import { renderAiAts } from './pages/ai-ats';
 import { renderPlaceholder } from './pages/placeholders';
 import type { User } from '@supabase/supabase-js';
 
@@ -48,6 +49,7 @@ function getPageTitle(pageId: PageId, subRoute: string | null): string {
     if (subRoute === 'review') return 'AI Review';
     if (subRoute === 'rewrite') return 'AI Rewrite';
     if (subRoute === 'tailor') return 'AI Tailor';
+    if (subRoute === 'ats') return 'ATS Tracker';
     return 'AI Tools';
   }
   return PAGE_TITLES[pageId];
@@ -82,6 +84,8 @@ async function navigate(pageId: PageId, subRoute: string | null = null): Promise
       await renderAiRewrite(container, currentUser!);
     } else if (subRoute === 'tailor') {
       await renderAiTailor(container, currentUser!);
+    } else if (subRoute === 'ats') {
+      await renderAiAts(container, currentUser!);
     } else {
       await renderAiTools(container, currentUser!);
     }

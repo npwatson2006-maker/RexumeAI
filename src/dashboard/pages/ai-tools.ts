@@ -75,6 +75,28 @@ export async function renderAiTools(container: HTMLElement, _user: User): Promis
           </div>
         </div>
 
+        <!-- ATS Tracker — active -->
+        <div class="ai-tool-card" id="tool-ats" role="button" tabindex="0">
+          <div class="ai-tool-card-icon ats">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="3" width="20" height="14" rx="2"/>
+              <line x1="8" y1="21" x2="16" y2="21"/>
+              <line x1="12" y1="17" x2="12" y2="21"/>
+              <line x1="6" y1="8" x2="10" y2="8"/>
+              <line x1="6" y1="12" x2="14" y2="12"/>
+            </svg>
+          </div>
+          <div class="ai-tool-card-body">
+            <h3 class="ai-tool-card-title">ATS Tracker</h3>
+            <p class="ai-tool-card-desc">See exactly what Applicant Tracking Systems detect — contact info, sections, keywords, and formatting issues that get resumes auto-rejected.</p>
+          </div>
+          <div class="ai-tool-card-arrow">
+            <svg viewBox="0 0 20 20" fill="currentColor" width="18" height="18">
+              <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"/>
+            </svg>
+          </div>
+        </div>
+
       </div>
     </div>
   `;
@@ -95,5 +117,11 @@ export async function renderAiTools(container: HTMLElement, _user: User): Promis
   tailorCard.addEventListener('click', () => { window.location.hash = 'ai-tools/tailor'; });
   tailorCard.addEventListener('keydown', (e) => {
     if (e.key === 'Enter' || e.key === ' ') window.location.hash = 'ai-tools/tailor';
+  });
+
+  const atsCard = container.querySelector<HTMLElement>('#tool-ats')!;
+  atsCard.addEventListener('click', () => { window.location.hash = 'ai-tools/ats'; });
+  atsCard.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') window.location.hash = 'ai-tools/ats';
   });
 }

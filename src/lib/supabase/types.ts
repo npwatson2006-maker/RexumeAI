@@ -30,7 +30,7 @@ export interface ResumeRow {
   updated_at: string;
 }
 
-export type AiSessionType = 'review' | 'rewrite' | 'tailor';
+export type AiSessionType = 'review' | 'rewrite' | 'tailor' | 'ats';
 
 export interface AiSessionRow {
   id: string;                // uuid
@@ -199,6 +199,48 @@ export interface TailorResult {
   items: TailorItem[];
   keywords_added: string[]; // keywords from the job description that were woven in
   key_changes: string[];    // top-level summary of what changed
+}
+
+// ─────────────────────────────────────────────────────────────
+//  ATSResult — structured output from the ATS scan step
+//  Stored in ai_sessions.output_data (JSONB)
+// ─────────────────────────────────────────────────────────────
+
+export interface ATSContactParsed {
+  name_detected: boolean;
+  email_detected: boolean;
+  phone_detected: boolean;
+  location_detected: boolean;
+  linkedin_detected: boolean;
+}
+
+export interface ATSSectionResult {
+  section: string;       // 'contact' | 'summary' | 'experience' | 'education' | 'skills' etc.
+  detected: boolean;
+  confidence: 'high' | 'medium' | 'low';
+  notes: string;
+}
+
+export interface ATSFormattingIssue {
+  issue: string;
+  severity: 'critical' | 'warning' | 'info';
+  suggestion: string;
+}
+
+export interface ATSKeywordAnalysis {
+  found: string[];
+  suggested_missing: string[];
+  density_score: number;  // 0-100
+}
+
+export interface ATSResult {
+  overall_score: number;            // 0-100 ATS compatibility score
+  summary: string;
+  parsed_contact: ATSContactParsed;
+  sections: ATSSectionResult[];
+  formatting_issues: ATSFormattingIssue[];
+  keyword_analysis: ATSKeywordAnalysis;
+  recommendations: string[];
 }
 
 export interface Database {
