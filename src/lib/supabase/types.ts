@@ -157,6 +157,50 @@ export interface ReviewResult {
 //  Database type  (used to type the Supabase client)
 // ─────────────────────────────────────────────────────────────
 
+// ─────────────────────────────────────────────────────────────
+//  RewriteResult — structured output from the AI rewrite step
+//  Stored in ai_sessions.output_data (JSONB)
+// ─────────────────────────────────────────────────────────────
+
+export interface RewriteItem {
+  section: string;      // 'summary' | 'experience' | 'education' | 'skills' etc.
+  item_index: number;   // 0-based; use 0 for scalar sections like summary
+  field: string;        // 'summary' | 'description' | 'title' etc.
+  label: string;        // human-readable e.g. "Software Engineer at Acme Corp"
+  original: string;
+  rewritten: string;
+  changes: string[];    // specific improvements made (bullet list)
+}
+
+export interface RewriteResult {
+  overall_summary: string;
+  items: RewriteItem[];
+  key_improvements: string[];
+}
+
+// ─────────────────────────────────────────────────────────────
+//  TailorResult — structured output from the AI tailor step
+//  Stored in ai_sessions.output_data (JSONB)
+// ─────────────────────────────────────────────────────────────
+
+export interface TailorItem {
+  section: string;      // 'summary' | 'experience' | 'education' | 'skills' etc.
+  item_index: number;   // 0-based; use 0 for scalar sections like summary
+  field: string;        // 'summary' | 'description' | 'title' etc.
+  label: string;        // human-readable e.g. "Software Engineer at Acme Corp"
+  original: string;
+  tailored: string;
+  changes: string[];    // specific tailoring changes made
+}
+
+export interface TailorResult {
+  overall_summary: string;
+  job_match_score: number;  // 0-100, estimated match after tailoring
+  items: TailorItem[];
+  keywords_added: string[]; // keywords from the job description that were woven in
+  key_changes: string[];    // top-level summary of what changed
+}
+
 export interface Database {
   public: {
     Tables: {

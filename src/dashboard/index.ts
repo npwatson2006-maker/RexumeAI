@@ -13,6 +13,8 @@ import { renderHome } from './pages/home';
 import { renderUpload } from './pages/upload';
 import { renderAiTools } from './pages/ai-tools';
 import { renderAiReview } from './pages/ai-review';
+import { renderAiRewrite } from './pages/ai-rewrite';
+import { renderAiTailor } from './pages/ai-tailor';
 import { renderPlaceholder } from './pages/placeholders';
 import type { User } from '@supabase/supabase-js';
 
@@ -76,6 +78,10 @@ async function navigate(pageId: PageId, subRoute: string | null = null): Promise
   } else if (pageId === 'ai-tools') {
     if (subRoute === 'review') {
       await renderAiReview(container, currentUser!);
+    } else if (subRoute === 'rewrite') {
+      await renderAiRewrite(container, currentUser!);
+    } else if (subRoute === 'tailor') {
+      await renderAiTailor(container, currentUser!);
     } else {
       await renderAiTools(container, currentUser!);
     }

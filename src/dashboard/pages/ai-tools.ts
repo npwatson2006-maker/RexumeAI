@@ -38,9 +38,8 @@ export async function renderAiTools(container: HTMLElement, _user: User): Promis
           </div>
         </div>
 
-        <!-- Rewrite — coming soon -->
-        <div class="ai-tool-card disabled">
-          <div class="ai-tool-card-coming-soon">Coming Soon</div>
+        <!-- Rewrite — active -->
+        <div class="ai-tool-card" id="tool-rewrite" role="button" tabindex="0">
           <div class="ai-tool-card-icon rewrite">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
               <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/>
@@ -51,11 +50,15 @@ export async function renderAiTools(container: HTMLElement, _user: User): Promis
             <h3 class="ai-tool-card-title">AI Rewrite</h3>
             <p class="ai-tool-card-desc">Let AI rewrite and strengthen your resume sections — better bullet points, stronger language, higher impact.</p>
           </div>
+          <div class="ai-tool-card-arrow">
+            <svg viewBox="0 0 20 20" fill="currentColor" width="18" height="18">
+              <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"/>
+            </svg>
+          </div>
         </div>
 
-        <!-- Tailor — coming soon -->
-        <div class="ai-tool-card disabled">
-          <div class="ai-tool-card-coming-soon">Coming Soon</div>
+        <!-- Tailor — active -->
+        <div class="ai-tool-card" id="tool-tailor" role="button" tabindex="0">
           <div class="ai-tool-card-icon tailor">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
               <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
@@ -64,6 +67,11 @@ export async function renderAiTools(container: HTMLElement, _user: User): Promis
           <div class="ai-tool-card-body">
             <h3 class="ai-tool-card-title">Tailor for Job</h3>
             <p class="ai-tool-card-desc">Paste a job description and let AI customize your resume to match — optimized keywords, reordered sections.</p>
+          </div>
+          <div class="ai-tool-card-arrow">
+            <svg viewBox="0 0 20 20" fill="currentColor" width="18" height="18">
+              <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"/>
+            </svg>
           </div>
         </div>
 
@@ -75,5 +83,17 @@ export async function renderAiTools(container: HTMLElement, _user: User): Promis
   reviewCard.addEventListener('click', () => { window.location.hash = 'ai-tools/review'; });
   reviewCard.addEventListener('keydown', (e) => {
     if (e.key === 'Enter' || e.key === ' ') window.location.hash = 'ai-tools/review';
+  });
+
+  const rewriteCard = container.querySelector<HTMLElement>('#tool-rewrite')!;
+  rewriteCard.addEventListener('click', () => { window.location.hash = 'ai-tools/rewrite'; });
+  rewriteCard.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') window.location.hash = 'ai-tools/rewrite';
+  });
+
+  const tailorCard = container.querySelector<HTMLElement>('#tool-tailor')!;
+  tailorCard.addEventListener('click', () => { window.location.hash = 'ai-tools/tailor'; });
+  tailorCard.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') window.location.hash = 'ai-tools/tailor';
   });
 }

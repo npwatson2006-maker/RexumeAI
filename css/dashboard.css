@@ -1997,3 +1997,445 @@ svg { display: block; }
   .review-action-bar { flex-direction: column; align-items: flex-start; }
   .review-resume-label { display: none; }
 }
+
+/* ─────────────────────────────────────────────────────────────
+   AI REWRITE PAGE
+   ───────────────────────────────────────────────────────────── */
+
+.ai-rewrite-page {
+  padding: 1.5rem 2rem 4rem;
+  max-width: 1100px;
+}
+
+/* ── Action bar (reuse review patterns) ── */
+
+.rewrite-action-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 0 1.25rem;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+/* ── Summary + Improvements cards ── */
+
+.rewrite-summary-card,
+.rewrite-improvements-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.rewrite-card-heading {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  margin-bottom: 0.625rem;
+}
+
+.rewrite-summary-text {
+  margin: 0;
+  line-height: 1.6;
+  color: var(--text);
+}
+
+.rewrite-key-improvements-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+
+.rewrite-key-improvements-list li {
+  display: flex;
+  gap: 0.5rem;
+  align-items: flex-start;
+  color: var(--text);
+  font-size: 0.9rem;
+}
+
+.rewrite-key-improvements-list .improvement-icon {
+  color: #c9a227;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+/* ── Rewrite item cards ── */
+
+.rewrite-items {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.rewrite-item-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.25rem 1.5rem;
+  transition: box-shadow 0.15s ease;
+}
+
+.rewrite-item-card:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+}
+
+.rewrite-item-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.rewrite-item-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  flex-wrap: wrap;
+}
+
+.rewrite-item-section-tag {
+  display: inline-flex;
+  align-items: center;
+  background: rgba(124, 164, 145, 0.15);
+  color: var(--accent);
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  padding: 0.2rem 0.55rem;
+  border-radius: 99px;
+  border: 1px solid rgba(124, 164, 145, 0.3);
+  white-space: nowrap;
+}
+
+.rewrite-item-label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+/* ── Copy button ── */
+
+.copy-btn {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.3rem 0.7rem;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.copy-btn:hover {
+  background: var(--surface-hover, rgba(255,255,255,0.06));
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.copy-btn.copied {
+  background: rgba(124, 164, 145, 0.15);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* ── Original / Rewritten columns ── */
+
+.rewrite-columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.rewrite-col-original,
+.rewrite-col-rewritten {
+  border-radius: 8px;
+  padding: 0.875rem 1rem;
+}
+
+.rewrite-col-original {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border);
+}
+
+.rewrite-col-rewritten {
+  background: rgba(124, 164, 145, 0.06);
+  border: 1px solid rgba(124, 164, 145, 0.25);
+  border-left: 3px solid var(--accent);
+}
+
+.rewrite-col-label {
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  margin-bottom: 0.5rem;
+}
+
+.rewrite-col-text {
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: var(--text);
+  white-space: pre-wrap;
+}
+
+.rewrite-col-original .rewrite-col-text {
+  color: var(--text-muted);
+}
+
+/* ── Changes toggle ── */
+
+.rewrite-changes-footer {
+  border-top: 1px solid var(--border);
+  padding-top: 0.625rem;
+}
+
+.rewrite-changes-toggle {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.25rem 0;
+  transition: color 0.15s;
+}
+
+.rewrite-changes-toggle:hover { color: var(--text); }
+
+.changes-chevron {
+  display: inline-block;
+  transition: transform 0.2s ease;
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.rewrite-item-card.changes-open .changes-chevron {
+  transform: rotate(90deg);
+}
+
+.rewrite-changes-list {
+  display: none;
+  margin: 0.5rem 0 0 0.25rem;
+  padding: 0 0 0 1rem;
+  list-style: disc;
+  color: var(--text-muted);
+  font-size: 0.825rem;
+  line-height: 1.6;
+}
+
+.rewrite-item-card.changes-open .rewrite-changes-list {
+  display: block;
+}
+
+/* ── Responsive ── */
+
+@media (max-width: 900px) {
+  .rewrite-columns {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .ai-rewrite-page { padding: 1rem 1rem 3rem; }
+  .rewrite-action-bar { flex-direction: column; align-items: flex-start; }
+  .rewrite-item-header { flex-direction: column; align-items: flex-start; }
+}
+
+/* ─────────────────────────────────────────────────────────────
+   AI TAILOR PAGE
+   ───────────────────────────────────────────────────────────── */
+
+.ai-tailor-page {
+  padding: 1.5rem 2rem 4rem;
+  max-width: 1100px;
+}
+
+/* ── Job description input ── */
+
+.tailor-jd-wrap {
+  margin-top: 1.5rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.25rem 1.5rem;
+}
+
+.tailor-jd-label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 0.25rem;
+}
+
+.tailor-jd-hint {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin: 0 0 0.75rem;
+}
+
+.tailor-jd-textarea {
+  width: 100%;
+  box-sizing: border-box;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
+  font-family: inherit;
+  font-size: 0.875rem;
+  line-height: 1.6;
+  padding: 0.75rem 1rem;
+  resize: vertical;
+  transition: border-color 0.15s;
+}
+
+.tailor-jd-textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.tailor-jd-textarea::placeholder { color: var(--text-muted); }
+
+.tailor-jd-charcount {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-top: 0.375rem;
+  text-align: right;
+}
+
+/* ── Match score + summary card ── */
+
+.tailor-header-card {
+  display: flex;
+  gap: 1.5rem;
+  align-items: flex-start;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.tailor-score-wrap {
+  flex-shrink: 0;
+}
+
+.tailor-score-circle {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  border: 3px solid var(--score-color, var(--accent));
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  background: rgba(124, 164, 145, 0.06);
+}
+
+.tailor-score-number {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--score-color, var(--accent));
+  line-height: 1.1;
+}
+
+.tailor-score-label {
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+}
+
+.tailor-header-body {
+  flex: 1;
+  min-width: 0;
+}
+
+/* ── Keywords added ── */
+
+.tailor-keywords-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.tailor-keywords-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.375rem;
+}
+
+.tailor-keyword-chip {
+  display: inline-flex;
+  align-items: center;
+  background: rgba(124, 164, 145, 0.12);
+  color: var(--accent);
+  border: 1px solid rgba(124, 164, 145, 0.3);
+  border-radius: 99px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.2rem 0.6rem;
+}
+
+/* ── Tailor-specific column variant ── */
+
+.rewrite-col-tailored {
+  background: rgba(124, 164, 145, 0.06);
+  border: 1px solid rgba(124, 164, 145, 0.25);
+  border-left: 3px solid var(--accent);
+  border-radius: 8px;
+  padding: 0.875rem 1rem;
+}
+
+.tailor-tag {
+  background: rgba(201, 162, 39, 0.15);
+  color: #c9a227;
+  border-color: rgba(201, 162, 39, 0.3);
+}
+
+/* ── History match badge ── */
+
+.tailor-match-badge {
+  background: rgba(124, 164, 145, 0.12);
+  color: var(--accent);
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.15rem 0.5rem;
+  border-radius: 99px;
+  border: 1px solid rgba(124, 164, 145, 0.25);
+}
+
+/* ── Responsive ── */
+
+@media (max-width: 900px) {
+  .tailor-header-card { flex-direction: column; align-items: flex-start; }
+  .tailor-score-circle { width: 64px; height: 64px; }
+  .tailor-score-number { font-size: 1rem; }
+}
+
+@media (max-width: 600px) {
+  .ai-tailor-page { padding: 1rem 1rem 3rem; }
+}
