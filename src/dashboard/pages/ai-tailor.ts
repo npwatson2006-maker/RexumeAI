@@ -8,8 +8,8 @@
  */
 
 import { supabase } from '../../lib/supabase/client';
-import { getResumes, createAiSession, getAiSessionsByType, deleteAiSession } from '../../lib/supabase/db';
-import type { ResumeRow, AiSessionRow, TailorResult, TailorItem } from '../../lib/supabase/types';
+import { getResumes, createAiSession, getAiSessionsByType, deleteAiSession, createResume } from '../../lib/supabase/db';
+import type { ResumeRow, AiSessionRow, TailorResult, TailorItem, ParsedResume } from '../../lib/supabase/types';
 import type { User } from '@supabase/supabase-js';
 
 // ── State ──────────────────────────────────────────────────────
@@ -334,6 +334,7 @@ function renderResults(): void {
         <span class="review-resume-label">${escHtml(resume.title)}</span>
         <div class="review-action-right">
           <button class="review-action-btn secondary" id="btn-rerun">Re-run Tailor</button>
+          <button class="review-action-btn accent" id="btn-save">Save as New Resume</button>
           <button class="review-action-btn danger" id="btn-delete">Delete</button>
         </div>
       </div>
@@ -386,6 +387,7 @@ function renderResults(): void {
   rootContainer.querySelector('#btn-back')!.addEventListener('click', () => renderPicker());
   rootContainer.querySelector('#btn-rerun')!.addEventListener('click', () => startProcessing());
   rootContainer.querySelector('#btn-delete')!.addEventListener('click', () => showDeleteConfirm());
+  rootContainer.querySelector('#btn-save')!.addEventListener('click', () => showSaveModal());
 
   // Wire copy buttons
   rootContainer.querySelectorAll<HTMLButtonElement>('.copy-btn').forEach((btn) => {
@@ -460,6 +462,143 @@ function renderTailorItemCard(item: TailorItem): string {
       ` : ''}
     </div>
   `;
+}
+
+// ── Save as New Resume ─────────────────────────────────────────
+
+function applyTailoring(original: ParsedResume, items: TailorItem[]): ParsedResume {
+  const result: ParsedResume = JSON.parse(JSON.stringify(original));
+  for (const item of items) {
+    switch (item.section) {
+      case 'summary':
+        result.summary = item.tailored;
+        break;
+      case 'experience':
+        if (result.experience[item.item_index]) {
+          (result.experience[item.item_index] as unknown as Record<string, string>)[item.field] = item.tailored;
+        }
+        break;
+      case 'education':
+        if (result.education[item.item_index]) {
+          (result.education[item.item_index] as unknown as Record<string, string>)[item.field] = item.tailored;
+        }
+        break;
+      case 'skills':
+        result.skills = item.tailored.split(',').map((s) => s.trim()).filter(Boolean);
+        break;
+      case 'certifications':
+        if (result.certifications[item.item_index]) {
+          (result.certifications[item.item_index] as unknown as Record<string, string>)[item.field] = item.tailored;
+        }
+        break;
+      case 'projects':
+        if (result.projects[item.item_index]) {
+          (result.projects[item.item_index] as unknown as Record<string, string>)[item.field] = item.tailored;
+        }
+        break;
+    }
+  }
+  return result;
+}
+
+function showSaveModal(): void {
+  const result = state.result!;
+  const original = state.selected!.parsed_content as unknown as ParsedResume | null;
+  const fullName = original?.full_name ?? '';
+  const suggestedTitle = fullName
+    ? `${fullName} tailored for `
+    : `${state.selected!.title} — Tailored`;
+
+  const overlay = document.createElement('div');
+  overlay.className = 'confirm-dialog-overlay';
+  overlay.innerHTML = `
+    <div class="confirm-dialog save-resume-dialog">
+      <div class="confirm-dialog-title">Save as New Resume</div>
+      <p class="confirm-dialog-body">Give this tailored version a name. Include the role or company so it's easy to find later — e.g. "Alex Smith tailored for Google SWE Internship".</p>
+      <input
+        id="save-title-input"
+        class="save-title-input"
+        type="text"
+        value="${escAttr(suggestedTitle)}"
+        placeholder="e.g. Nick Watson tailored for XYZ Internship"
+        maxlength="120"
+      />
+      <div id="save-error" class="save-modal-error" style="display:none"></div>
+      <div class="confirm-dialog-actions">
+        <button class="btn-cancel" id="save-cancel">Cancel</button>
+        <button class="btn-confirm-save" id="save-confirm">Save Resume</button>
+      </div>
+    </div>
+  `;
+  rootContainer.appendChild(overlay);
+
+  const input = overlay.querySelector<HTMLInputElement>('#save-title-input')!;
+  const errorEl = overlay.querySelector<HTMLElement>('#save-error')!;
+  const saveBtn = overlay.querySelector<HTMLButtonElement>('#save-confirm')!;
+
+  // Place cursor at end so user can type the role name immediately
+  input.focus();
+  input.setSelectionRange(input.value.length, input.value.length);
+
+  overlay.querySelector('#save-cancel')!.addEventListener('click', () => overlay.remove());
+
+  saveBtn.addEventListener('click', async () => {
+    const title = input.value.trim();
+    if (!title) {
+      errorEl.textContent = 'Please enter a title.';
+      errorEl.style.display = 'block';
+      return;
+    }
+    if (!original) {
+      errorEl.textContent = 'Original resume content is missing.';
+      errorEl.style.display = 'block';
+      return;
+    }
+
+    saveBtn.disabled = true;
+    saveBtn.textContent = 'Saving…';
+    errorEl.style.display = 'none';
+
+    const mergedContent = applyTailoring(original, result.items ?? []);
+
+    const { error } = await createResume({
+      user_id: currentUser.id,
+      title,
+      original_file_url: null,
+      parsed_content: mergedContent as unknown as Record<string, unknown>,
+    });
+
+    if (error) {
+      errorEl.textContent = `Save failed: ${error}`;
+      errorEl.style.display = 'block';
+      saveBtn.disabled = false;
+      saveBtn.textContent = 'Save Resume';
+      return;
+    }
+
+    overlay.remove();
+    showSaveSuccess(title);
+  });
+}
+
+function showSaveSuccess(title: string): void {
+  const toast = document.createElement('div');
+  toast.className = 'save-success-toast';
+  toast.innerHTML = `
+    <span class="save-success-icon">✓</span>
+    <span>"${escHtml(title)}" saved to <a class="save-success-link" href="#resumes">My Resumes</a></span>
+  `;
+  document.body.appendChild(toast);
+  requestAnimationFrame(() => toast.classList.add('visible'));
+  setTimeout(() => {
+    toast.classList.remove('visible');
+    setTimeout(() => toast.remove(), 300);
+  }, 4000);
+
+  toast.querySelector('.save-success-link')!.addEventListener('click', () => {
+    toast.remove();
+    window.location.hash = 'resumes';
+  });
 }
 
 // ── Delete confirm dialog ──────────────────────────────────────
