@@ -212,9 +212,13 @@ async function startProcessing(): Promise<void> {
   `;
 
   try {
+    // Get a fresh session token right before calling the function
+    const { data: { session: authSession } } = await supabase.auth.getSession();
+
     // Call edge function
     const { data: fnResult, error: fnError } = await supabase.functions.invoke('review-resume', {
       body: { resume_id: state.selected.id },
+      headers: authSession ? { Authorization: `Bearer ${authSession.access_token}` } : {},
     });
 
     let result: ReviewResult | null = null;
