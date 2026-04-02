@@ -33,9 +33,32 @@ function showState(state: PageState): void {
 // ─────────────────────────────────────────────────────────────
 
 function bindForm(): void {
-  const form      = document.getElementById('reset-form') as HTMLFormElement;
-  const errorEl   = document.getElementById('reset-error') as HTMLElement;
-  const submitBtn = document.getElementById('reset-submit-btn') as HTMLButtonElement;
+  const form           = document.getElementById('reset-form') as HTMLFormElement;
+  const errorEl        = document.getElementById('reset-error') as HTMLElement;
+  const submitBtn      = document.getElementById('reset-submit-btn') as HTMLButtonElement;
+  const choiceDiv      = document.getElementById('state-choice') as HTMLElement;
+  const choiceResetBtn = document.getElementById('choice-reset-btn') as HTMLButtonElement;
+  const choiceContBtn  = document.getElementById('choice-continue-btn') as HTMLButtonElement;
+  const backBtn        = document.getElementById('back-to-choice-btn') as HTMLButtonElement;
+
+  // Show the password form when "Reset my password" is clicked
+  choiceResetBtn.addEventListener('click', () => {
+    choiceDiv.style.display = 'none';
+    form.style.display = '';
+    (document.getElementById('new-password') as HTMLInputElement).focus();
+  });
+
+  // Go straight to dashboard when "Continue to my account" is clicked
+  choiceContBtn.addEventListener('click', () => {
+    window.location.href = '/dashboard.html';
+  });
+
+  // Allow going back to choice screen
+  backBtn.addEventListener('click', () => {
+    form.style.display = 'none';
+    choiceDiv.style.display = '';
+    errorEl.hidden = true;
+  });
 
   form.addEventListener('submit', async (e) => {
     e.preventDefault();

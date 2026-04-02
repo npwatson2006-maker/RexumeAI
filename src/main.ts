@@ -398,6 +398,13 @@ async function init(): Promise<void> {
   // Inject the modal into the DOM
   createAuthModal();
 
+  // If this is a password recovery redirect (from the reset email link),
+  // hand off to the dedicated reset-password page rather than logging in.
+  if (window.location.hash.includes('type=recovery')) {
+    window.location.href = '/reset-password.html' + window.location.hash;
+    return;
+  }
+
   // Check if user is already logged in
   const { session } = await getSession();
   if (session) {
@@ -411,10 +418,12 @@ async function init(): Promise<void> {
   // React to future login/logout events
   onAuthStateChange((event) => {
     if (event === 'SIGNED_IN') {
+      // Guard against recovery tokens firing SIGNED_IN before PASSWORD_RECOVERY
+      if (window.location.hash.includes('type=recovery')) return;
       window.location.href = '/dashboard.html';
     }
     if (event === 'PASSWORD_RECOVERY') {
-      openAuthModal('reset');
+      window.location.href = '/reset-password.html' + window.location.hash;
     }
     if (event === 'SIGNED_OUT') updateNavForGuest();
   });
