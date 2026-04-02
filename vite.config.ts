@@ -10,8 +10,9 @@ export default defineConfig({
     rollupOptions: {
       // Multi-page: both the landing page and dashboard are entry points
       input: {
-        main:      resolve(__dirname, 'index.html'),
-        dashboard: resolve(__dirname, 'dashboard.html'),
+        main:           resolve(__dirname, 'index.html'),
+        dashboard:      resolve(__dirname, 'dashboard.html'),
+        resetPassword:  resolve(__dirname, 'reset-password.html'),
       },
     },
   },
