@@ -16,6 +16,7 @@ import { renderAiReview } from './pages/ai-review';
 import { renderAiRewrite } from './pages/ai-rewrite';
 import { renderAiTailor } from './pages/ai-tailor';
 import { renderAiAts } from './pages/ai-ats';
+import { renderResumes } from './pages/resumes';
 import { renderPlaceholder } from './pages/placeholders';
 import type { User } from '@supabase/supabase-js';
 
@@ -75,6 +76,8 @@ async function navigate(pageId: PageId, subRoute: string | null = null): Promise
 
   if (pageId === 'home') {
     await renderHome(container, currentUser!);
+  } else if (pageId === 'resumes') {
+    await renderResumes(container, currentUser!);
   } else if (pageId === 'upload') {
     await renderUpload(container, currentUser!);
   } else if (pageId === 'ai-tools') {

@@ -3,7 +3,7 @@
  * Each page shows a "Coming Soon" state with the right icon and label.
  */
 
-type PageId = 'resumes' | 'ai-tools' | 'settings' | 'help';
+type PageId = 'ai-tools' | 'settings' | 'help';
 
 interface PageConfig {
   icon: string;
@@ -12,11 +12,6 @@ interface PageConfig {
 }
 
 const PAGES: Record<PageId, PageConfig> = {
-  'resumes': {
-    icon: '📄',
-    title: 'My Resumes',
-    description: 'Upload, manage, and organize all your resumes in one place. Coming soon.',
-  },
   'ai-tools': {
     icon: '✨',
     title: 'AI Tools',
