@@ -8,9 +8,8 @@
 
 import { getResume } from '../../lib/supabase/db';
 import type { ResumeRow } from '../../lib/supabase/types';
-import type { ParsedResume } from '../../lib/supabase/types';
 import type { User } from '@supabase/supabase-js';
-import { generateKelleyDocx } from '../../lib/templates/kelley';
+import { renderExportPreview } from './export-preview';
 
 // ── Template definitions ──────────────────────────────────────
 // Add real templates here as they are built. Set `available: false` for placeholders.
@@ -113,7 +112,14 @@ function buildPreview(opts: PreviewOptions): string {
 
 // ── Entry Point ───────────────────────────────────────────────
 
-export async function renderExport(container: HTMLElement, user: User, resumeId: string | null): Promise<void> {
+export async function renderExport(container: HTMLElement, _user: User, resumeId: string | null): Promise<void> {
+  // Sub-route: "{resumeId}/preview/{templateId}" → preview page
+  if (resumeId && resumeId.includes('/preview/')) {
+    const parts = resumeId.split('/');
+    if (parts.length === 3 && parts[1] === 'preview') {
+      return renderExportPreview(container, _user, parts[0], parts[2]);
+    }
+  }
   // Render skeleton while we fetch the resume
   container.innerHTML = `
     <div class="export-page">
@@ -205,7 +211,7 @@ function renderTemplatePicker(container: HTMLElement, resume: ResumeRow): void {
               <div class="export-template-desc">${t.description}</div>
             </div>
             <button class="export-select-btn" data-template="${t.id}" ${!t.available ? 'disabled' : ''}>
-              ${t.available ? 'Select & Download' : 'Coming Soon'}
+              ${t.available ? 'Preview' : 'Coming Soon'}
             </button>
           </div>
         `).join('')}
@@ -217,36 +223,11 @@ function renderTemplatePicker(container: HTMLElement, resume: ResumeRow): void {
     window.location.hash = 'resumes';
   });
 
-  // Wire template selection
+  // Wire template selection — navigate to preview page
   container.querySelectorAll<HTMLButtonElement>('.export-select-btn:not([disabled])').forEach((btn) => {
     btn.addEventListener('click', () => {
       const templateId = btn.dataset.template!;
-      handleExport(resume, templateId, btn);
+      window.location.hash = `export/${resume.id}/preview/${templateId}`;
     });
   });
-}
-
-// ── Export handler ────────────────────────────────────────────
-
-async function handleExport(resume: ResumeRow, templateId: string, btn: HTMLButtonElement): Promise<void> {
-  const parsed = resume.parsed_content as ParsedResume | null;
-  if (!parsed) {
-    alert('Resume data is not available. Try re-uploading your resume.');
-    return;
-  }
-
-  btn.disabled = true;
-  btn.textContent = 'Generating…';
-
-  try {
-    if (templateId === 'kelley') {
-      await generateKelleyDocx(parsed, resume.title);
-    }
-  } catch (err) {
-    console.error('Export failed:', err);
-    alert('Failed to generate the resume. Please try again.');
-  } finally {
-    btn.disabled = false;
-    btn.textContent = 'Select & Download';
-  }
 }

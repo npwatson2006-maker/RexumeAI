@@ -55,6 +55,7 @@ function getPageTitle(pageId: PageId, subRoute: string | null): string {
     if (subRoute === 'ats') return 'ATS Tracker';
     return 'AI Tools';
   }
+  if (pageId === 'export' && subRoute?.includes('/preview/')) return 'Template Preview';
   return PAGE_TITLES[pageId];
 }
 
@@ -73,6 +74,7 @@ async function navigate(pageId: PageId, subRoute: string | null = null): Promise
 
   // Render the page
   const container = document.getElementById('page-container')!;
+  container.classList.remove('preview-page-mode');
   container.innerHTML = '';
   container.style.opacity = '0';
 
