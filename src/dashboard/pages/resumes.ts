@@ -388,5 +388,28 @@ function renderParsedContent(p: ParsedResume): string {
     `);
   }
 
+  // Activities
+  if (p.activities?.length) {
+    const items = p.activities.map((act) => `
+      <div class="resume-detail-item">
+        <div class="resume-detail-item-header">
+          <div>
+            <span class="resume-detail-item-title">${escHtml(act.organization)}</span>
+            ${act.role ? `<span class="resume-detail-item-sub"> — ${escHtml(act.role)}</span>` : ''}
+          </div>
+          <div class="resume-detail-item-date">${escHtml(act.start_date)}${act.end_date ? ` – ${escHtml(act.end_date)}` : ''}</div>
+        </div>
+        ${act.description ? `<p class="resume-detail-body">${escHtml(act.description)}</p>` : ''}
+      </div>
+    `).join('');
+
+    sections.push(`
+      <div class="resume-detail-section">
+        <h3 class="resume-detail-heading">Activities &amp; Organizations</h3>
+        ${items}
+      </div>
+    `);
+  }
+
   return sections.join('');
 }

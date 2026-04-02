@@ -53,8 +53,19 @@ Return an object matching this exact schema (use null for missing fields, empty 
   "languages": ["string"],
   "projects": [
     { "name": "string", "description": "string", "url": "string or null" }
+  ],
+  "activities": [
+    {
+      "organization": "string",
+      "role": "string",
+      "start_date": "string",
+      "end_date": "string (use Present if current)",
+      "description": "string"
+    }
   ]
-}`;
+}
+
+IMPORTANT: The "activities" field must capture all extracurricular activities, clubs, organizations, volunteer work, community involvement, and leadership roles that are NOT paid work experience. College students commonly list these under headings like "Activities", "Leadership", "Involvement", "Organizations", "Volunteer", or "Community Service". Do not leave this array empty if such entries exist in the resume.`;
 
 const CORS_HEADERS = {
   'Access-Control-Allow-Origin': '*',

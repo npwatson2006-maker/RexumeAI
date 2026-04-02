@@ -212,6 +212,15 @@ function getSectionDefs(parsed: ParsedResume): SectionDef[] {
       items: parsed.projects.map(p => ({ label: p.name })),
     });
   }
+  if (parsed.activities?.length) {
+    defs.push({
+      key: 'activities',
+      label: 'Activities & Organizations',
+      items: parsed.activities.map(a => ({
+        label: [a.organization, a.role].filter(Boolean).join(' – '),
+      })),
+    });
+  }
 
   return defs;
 }

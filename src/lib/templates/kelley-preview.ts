@@ -11,6 +11,7 @@ import type {
   ParsedResumeEducation,
   ParsedResumeCertification,
   ParsedResumeProject,
+  ParsedResumeActivity,
 } from '../supabase/types';
 
 // ── Visibility state ──────────────────────────────────────────
@@ -20,7 +21,7 @@ export interface VisibilityState {
   items: Record<string, Record<number, boolean>>;
 }
 
-const ARRAY_SECTIONS = ['experience', 'education', 'certifications', 'languages', 'projects', 'skills'] as const;
+const ARRAY_SECTIONS = ['experience', 'education', 'certifications', 'languages', 'projects', 'skills', 'activities'] as const;
 
 export function defaultVisibility(data: ParsedResume): VisibilityState {
   const items: Record<string, Record<number, boolean>> = {};
@@ -40,6 +41,7 @@ export function defaultVisibility(data: ParsedResume): VisibilityState {
       certifications: true,
       languages: true,
       projects: true,
+      activities: true,
     },
     items,
   };
@@ -74,6 +76,9 @@ export function applyVisibility(data: ParsedResume, state: VisibilityState): Par
       : [],
     projects: isVisible(state, 'projects')
       ? (data.projects ?? []).filter((_, i) => isVisible(state, 'projects', i))
+      : [],
+    activities: isVisible(state, 'activities')
+      ? (data.activities ?? []).filter((_, i) => isVisible(state, 'activities', i))
       : [],
   };
 }
@@ -205,6 +210,33 @@ function renderProjects(items: ParsedResumeProject[], state: VisibilityState): s
     ${rows}`;
 }
 
+function renderActivities(items: ParsedResumeActivity[], state: VisibilityState): string {
+  if (!isVisible(state, 'activities')) return '';
+  const visible = items.filter((_, i) => isVisible(state, 'activities', i));
+  if (visible.length === 0) return '';
+
+  const rows = visible.map(act => {
+    const dateRange = `${esc(act.start_date)} – ${esc(act.end_date)}`;
+    const bullets = act.description ? splitBullets(act.description) : [];
+    const bulletHtml = bullets.length > 0
+      ? `<ul class="kelley-bullets">${bullets.map(b => `<li>${esc(b)}</li>`).join('')}</ul>`
+      : '';
+    return `
+      <div class="kelley-entry">
+        <div class="kelley-entry-header">
+          <span class="kelley-bold">${esc(act.organization)}</span>
+          <span>${dateRange}</span>
+        </div>
+        <div class="kelley-entry-sub kelley-italic">${esc(act.role)}</div>
+        ${bulletHtml}
+      </div>`;
+  }).join('');
+
+  return `
+    <div class="kelley-section-title">Activities &amp; Organizations</div>
+    ${rows}`;
+}
+
 function renderLanguages(languages: string[], state: VisibilityState): string {
   if (!isVisible(state, 'languages')) return '';
   const visible = languages.filter((_, i) => isVisible(state, 'languages', i));
@@ -236,6 +268,7 @@ export function renderKelleyPreviewHTML(data: ParsedResume, visibility: Visibili
       ${renderSkills(data.skills ?? [], visibility)}
       ${renderCertifications(data.certifications ?? [], visibility)}
       ${renderProjects(data.projects ?? [], visibility)}
+      ${renderActivities(data.activities ?? [], visibility)}
       ${renderLanguages(data.languages ?? [], visibility)}
     </div>`;
 }

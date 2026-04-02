@@ -10,7 +10,7 @@
 import { supabase } from '../../lib/supabase/client';
 import { createResume, updateResume, deleteResume, deleteResumeFile } from '../../lib/supabase/db';
 import { extractText, isAcceptedType, formatFileSize, MAX_FILE_SIZE_BYTES, ExtractionError } from '../../lib/parsing/extractor';
-import type { ParsedResume, ParsedResumeExperience, ParsedResumeEducation, ParsedResumeCertification, ParsedResumeProject } from '../../lib/supabase/types';
+import type { ParsedResume, ParsedResumeExperience, ParsedResumeEducation, ParsedResumeCertification, ParsedResumeProject, ParsedResumeActivity } from '../../lib/supabase/types';
 import type { User } from '@supabase/supabase-js';
 
 // ── Upload state ────────────────────────────────────────────────
@@ -475,6 +475,15 @@ function renderPreview(root: HTMLElement): void {
           <button class="add-card-btn" id="add-proj-btn">+ Add Project</button>
         </div>
 
+        <!-- Activities -->
+        <div class="preview-section">
+          <div class="preview-section-label">Activities &amp; Organizations</div>
+          <div id="activities-list">
+            ${(p.activities ?? []).map((act, i) => activityCardHtml(act, i)).join('')}
+          </div>
+          <button class="add-card-btn" id="add-act-btn">+ Add Activity</button>
+        </div>
+
       </div><!-- /resume-preview -->
 
       <div class="preview-actions-bottom">
@@ -534,6 +543,21 @@ function certCardHtml(cert: ParsedResumeCertification, idx: number): string {
         <div class="preview-field"><label>Issuer</label><input type="text" data-cert="${idx}" data-key="issuer" value="${escapeAttr(cert.issuer ?? '')}" placeholder="Issuing org" /></div>
         <div class="preview-field"><label>Date</label><input type="text" data-cert="${idx}" data-key="date" value="${escapeAttr(cert.date ?? '')}" placeholder="Month Year" /></div>
       </div>
+    </div>
+  `;
+}
+
+function activityCardHtml(act: ParsedResumeActivity, idx: number): string {
+  return `
+    <div class="preview-card" data-act-idx="${idx}">
+      <button class="card-remove-btn" data-remove-act="${idx}" aria-label="Remove">&times;</button>
+      <div class="preview-grid-2">
+        <div class="preview-field"><label>Organization</label><input type="text" data-act="${idx}" data-key="organization" value="${escapeAttr(act.organization)}" placeholder="Club / Organization" /></div>
+        <div class="preview-field"><label>Role</label><input type="text" data-act="${idx}" data-key="role" value="${escapeAttr(act.role)}" placeholder="e.g. President" /></div>
+        <div class="preview-field"><label>Start Date</label><input type="text" data-act="${idx}" data-key="start_date" value="${escapeAttr(act.start_date)}" placeholder="e.g. Aug 2022" /></div>
+        <div class="preview-field"><label>End Date</label><input type="text" data-act="${idx}" data-key="end_date" value="${escapeAttr(act.end_date)}" placeholder="e.g. Present" /></div>
+      </div>
+      <div class="preview-field full-width"><label>Description</label><textarea data-act="${idx}" data-key="description" rows="2" placeholder="What you did…">${escapeHtml(act.description)}</textarea></div>
     </div>
   `;
 }
@@ -604,6 +628,15 @@ function wirePreviewEvents(root: HTMLElement): void {
     'add-proj-btn',
     () => ({ name: '', description: '', url: null }),
     projectCardHtml
+  );
+
+  // ── Activities ──
+  wireCardList<ParsedResumeActivity>(
+    root, 'activities-list', 'act', p.activities ?? [],
+    (items) => { p.activities = items; },
+    'add-act-btn',
+    () => ({ organization: '', role: '', start_date: '', end_date: 'Present', description: '' }),
+    activityCardHtml
   );
 
   // ── Save buttons ──

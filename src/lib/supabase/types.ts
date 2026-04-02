@@ -99,6 +99,14 @@ export interface ParsedResumeProject {
   url: string | null;
 }
 
+export interface ParsedResumeActivity {
+  organization: string;
+  role: string;
+  start_date: string;
+  end_date: string;
+  description: string;
+}
+
 export interface ParsedResume {
   full_name: string;
   email: string | null;
@@ -113,6 +121,7 @@ export interface ParsedResume {
   certifications: ParsedResumeCertification[];
   languages: string[];
   projects: ParsedResumeProject[];
+  activities: ParsedResumeActivity[];
 }
 
 // ─────────────────────────────────────────────────────────────

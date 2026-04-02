@@ -20,7 +20,7 @@ import {
   LevelFormat,
   convertInchesToTwip,
 } from 'docx';
-import type { ParsedResume, ParsedResumeExperience, ParsedResumeEducation } from '../supabase/types';
+import type { ParsedResume, ParsedResumeExperience, ParsedResumeEducation, ParsedResumeActivity } from '../supabase/types';
 
 // ── Constants ──────────────────────────────────────────────────
 
@@ -255,6 +255,30 @@ function buildExperienceSection(experience: ParsedResumeExperience[]): Paragraph
   return paras;
 }
 
+function buildActivitiesSection(activities: ParsedResumeActivity[]): Paragraph[] {
+  if (activities.length === 0) return [];
+
+  const paras: Paragraph[] = [sectionHeader('ACTIVITIES & ORGANIZATIONS')];
+
+  activities.forEach((act, idx) => {
+    if (idx > 0) paras.push(emptyPara());
+    const dateRange = formatDateRange(act.start_date, act.end_date);
+    paras.push(new Paragraph({
+      tabStops: [{ type: TabStopType.RIGHT, position: 9360 }],
+      children: [
+        tnr(act.organization, { bold: true }),
+        ...(dateRange ? [tnr('\t', {}), tnr(dateRange)] : []),
+      ],
+      contextualSpacing: true,
+    }));
+    paras.push(rolePara(act.role));
+    const bullets = splitBullets(act.description);
+    bullets.forEach((b) => paras.push(bulletPara(b)));
+  });
+
+  return paras;
+}
+
 function buildSkillsSection(skills: string[]): Paragraph[] {
   if (skills.length === 0) return [];
   return [
@@ -288,6 +312,10 @@ export async function generateKelleyDocx(data: ParsedResume, fileName: string): 
 
     // ── Skills/Interests ──
     ...buildSkillsSection(data.skills ?? []),
+    emptyPara(),
+
+    // ── Activities & Organizations ──
+    ...buildActivitiesSection(data.activities ?? []),
   ];
 
   const doc = new Document({
