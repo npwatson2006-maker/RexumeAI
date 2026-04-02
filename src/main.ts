@@ -5,7 +5,11 @@
  * to Supabase sign-up / login flows.
  */
 
+import { inject, track } from '@vercel/analytics';
 import { signUp, signIn, signOut, onAuthStateChange, getSession, sendPasswordResetEmail, updatePassword } from './lib/supabase/auth';
+
+// Initialise Vercel Analytics (page-view tracking)
+inject();
 
 // ─────────────────────────────────────────────────────────────
 //  Types
@@ -233,12 +237,15 @@ function bindAuthModalEvents(modal: HTMLElement): void {
 
     try {
       if (state.mode === 'signup') {
+        track('signup_started');
         const { error } = await signUp({ email, password, fullName });
         if (error) { showError(errorEl, error.message); return; }
+        track('signup_completed');
         showSuccess(form, 'Check your email to confirm your account!');
       } else {
         const { error } = await signIn({ email, password });
         if (error) { showError(errorEl, error.message); return; }
+        track('login_completed');
         closeAuthModal();
         updateNavForLoggedInUser();
       }
@@ -417,6 +424,8 @@ async function init(): Promise<void> {
     btn.addEventListener('click', (e) => {
       e.preventDefault();
       const mode = (btn.dataset.authCta as 'signup' | 'login') ?? 'signup';
+      const label = btn.textContent?.trim() ?? 'unknown';
+      track('cta_clicked', { label, mode });
       openAuthModal(mode);
     });
   });
