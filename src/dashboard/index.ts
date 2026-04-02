@@ -17,15 +17,17 @@ import { renderAiRewrite } from './pages/ai-rewrite';
 import { renderAiTailor } from './pages/ai-tailor';
 import { renderAiAts } from './pages/ai-ats';
 import { renderResumes } from './pages/resumes';
+import { renderExport } from './pages/export';
 import { renderPlaceholder } from './pages/placeholders';
 import type { User } from '@supabase/supabase-js';
 
 // ── Page map ──────────────────────────────────────────────────
-type PageId = 'home' | 'resumes' | 'ai-tools' | 'settings' | 'help' | 'upload';
+type PageId = 'home' | 'resumes' | 'export' | 'ai-tools' | 'settings' | 'help' | 'upload';
 
 const PAGE_TITLES: Record<PageId, string> = {
   'home':      'Dashboard',
   'resumes':   'My Resumes',
+  'export':    'Export Resume',
   'ai-tools':  'AI Tools',
   'settings':  'Settings',
   'help':      'Help & FAQ',
@@ -78,6 +80,8 @@ async function navigate(pageId: PageId, subRoute: string | null = null): Promise
     await renderHome(container, currentUser!);
   } else if (pageId === 'resumes') {
     await renderResumes(container, currentUser!);
+  } else if (pageId === 'export') {
+    await renderExport(container, currentUser!, subRoute);
   } else if (pageId === 'upload') {
     await renderUpload(container, currentUser!);
   } else if (pageId === 'ai-tools') {

@@ -3134,3 +3134,178 @@ svg { display: block; }
   .resume-detail-item-header { flex-direction: column; gap: 0.15rem; }
   .resume-detail-item-dates { align-self: flex-start; }
 }
+
+/* ════════════════════════════════════════════════════════════
+   Resume Detail — Export button & action row
+   ════════════════════════════════════════════════════════════ */
+
+.resume-detail-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  flex-wrap: wrap;
+  margin-top: 0.25rem;
+}
+
+.resume-export-btn {
+  padding: 0.6rem 1.5rem;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  letter-spacing: 0.03em;
+  transition: opacity 0.15s, transform 0.1s;
+}
+.resume-export-btn:hover { opacity: 0.88; transform: translateY(-1px); }
+.resume-export-btn:active { transform: translateY(0); }
+
+/* ════════════════════════════════════════════════════════════
+   Export Page — Template Picker
+   ════════════════════════════════════════════════════════════ */
+
+.export-page { max-width: 960px; }
+
+.export-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.export-templates-label {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-secondary);
+}
+
+.export-coming-soon-tag {
+  padding: 0.2rem 0.55rem;
+  background: var(--bg-raised);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  font-size: 0.7rem;
+  font-weight: 500;
+  text-transform: none;
+  letter-spacing: 0;
+  color: var(--text-secondary);
+}
+
+/* ── Template grid ── */
+
+.export-templates-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1.25rem;
+}
+
+.export-template-card {
+  background: var(--bg-card);
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  cursor: pointer;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.export-template-card:not(.export-template-unavailable):hover {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 15%, transparent);
+}
+
+.export-template-unavailable { cursor: default; opacity: 0.75; }
+
+/* ── Mini preview thumbnail ── */
+
+.export-template-preview {
+  position: relative;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  aspect-ratio: 3/4;
+  background: #f9fafb;
+}
+.export-template-preview svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.export-template-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.export-template-soon {
+  padding: 0.3rem 0.8rem;
+  background: rgba(255,255,255,0.15);
+  border: 1px solid rgba(255,255,255,0.35);
+  border-radius: 20px;
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  backdrop-filter: blur(4px);
+}
+
+/* ── Template info ── */
+
+.export-template-info { flex: 1; }
+
+.export-template-name {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 0.2rem;
+}
+
+.export-template-desc {
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+/* ── Select button ── */
+
+.export-select-btn {
+  width: 100%;
+  padding: 0.5rem;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 7px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+.export-select-btn:hover:not([disabled]) { opacity: 0.85; }
+.export-select-btn[disabled] {
+  background: var(--bg-raised);
+  color: var(--text-secondary);
+  border: 1px solid var(--border);
+  cursor: not-allowed;
+}
+
+/* ── Responsive ── */
+
+@media (max-width: 700px) {
+  .export-templates-grid { grid-template-columns: repeat(2, 1fr); gap: 0.75rem; }
+  .export-header { flex-direction: column; }
+}

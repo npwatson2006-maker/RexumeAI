@@ -227,7 +227,10 @@ function renderDetail(resume: ResumeRow): void {
           <h1 class="dash-greeting">${escHtml(resume.title)}</h1>
           <p class="dash-subtitle">Saved ${formatDate(resume.created_at)}</p>
         </div>
-        <button class="my-resumes-upload-btn" id="use-ai-tools-btn">Use in AI Tools ↗</button>
+        <div class="resume-detail-actions">
+          <button class="my-resumes-upload-btn" id="use-ai-tools-btn">Use in AI Tools ↗</button>
+          <button class="resume-export-btn" id="export-btn">Export</button>
+        </div>
       </div>
 
       <div class="resume-detail-content">
@@ -250,6 +253,10 @@ function renderDetail(resume: ResumeRow): void {
 
   rootContainer.querySelector('#use-ai-tools-btn')!.addEventListener('click', () => {
     window.location.hash = 'ai-tools';
+  });
+
+  rootContainer.querySelector('#export-btn')!.addEventListener('click', () => {
+    window.location.hash = `export/${resume.id}`;
   });
 }
 
