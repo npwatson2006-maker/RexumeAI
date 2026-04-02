@@ -8,7 +8,9 @@
 
 import { getResume } from '../../lib/supabase/db';
 import type { ResumeRow } from '../../lib/supabase/types';
+import type { ParsedResume } from '../../lib/supabase/types';
 import type { User } from '@supabase/supabase-js';
+import { generateKelleyDocx } from '../../lib/templates/kelley';
 
 // ── Template definitions ──────────────────────────────────────
 // Add real templates here as they are built. Set `available: false` for placeholders.
@@ -23,11 +25,11 @@ interface TemplateConfig {
 
 const TEMPLATES: TemplateConfig[] = [
   {
-    id: 'classic',
-    name: 'Classic',
-    description: 'Clean and traditional. Great for corporate roles.',
-    available: false,
-    preview: buildPreview({ headerHeight: 52, accent: '#1e3a5f' }),
+    id: 'kelley',
+    name: 'Kelley',
+    description: 'Indiana University Kelley School of Business official format.',
+    available: true,
+    preview: buildPreview({ headerHeight: 44, accent: '#990000' }),
   },
   {
     id: 'modern',
@@ -215,20 +217,36 @@ function renderTemplatePicker(container: HTMLElement, resume: ResumeRow): void {
     window.location.hash = 'resumes';
   });
 
-  // Wire template selection (for when templates become available)
+  // Wire template selection
   container.querySelectorAll<HTMLButtonElement>('.export-select-btn:not([disabled])').forEach((btn) => {
     btn.addEventListener('click', () => {
       const templateId = btn.dataset.template!;
-      handleExport(resume, templateId);
+      handleExport(resume, templateId, btn);
     });
   });
 }
 
 // ── Export handler ────────────────────────────────────────────
-// Called when a user selects an available template.
-// Add per-template download logic here as templates are built.
 
-function handleExport(resume: ResumeRow, templateId: string): void {
-  // TODO: implement download for each template
-  console.log('Export', resume.id, 'with template', templateId);
+async function handleExport(resume: ResumeRow, templateId: string, btn: HTMLButtonElement): Promise<void> {
+  const parsed = resume.parsed_content as ParsedResume | null;
+  if (!parsed) {
+    alert('Resume data is not available. Try re-uploading your resume.');
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = 'Generating…';
+
+  try {
+    if (templateId === 'kelley') {
+      await generateKelleyDocx(parsed, resume.title);
+    }
+  } catch (err) {
+    console.error('Export failed:', err);
+    alert('Failed to generate the resume. Please try again.');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Select & Download';
+  }
 }
