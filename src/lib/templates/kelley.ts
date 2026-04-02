@@ -16,7 +16,6 @@ import {
   AlignmentType,
   BorderStyle,
   TabStopType,
-  TabStopPosition,
   UnderlineType,
   LevelFormat,
   convertInchesToTwip,
@@ -113,7 +112,7 @@ function eduInstitutionPara(edu: ParsedResumeEducation): Paragraph {
 
   return new Paragraph({
     tabStops: [
-      { type: TabStopType.RIGHT, position: TabStopPosition.MAX },
+      { type: TabStopType.RIGHT, position: 9360 },
     ],
     children: [
       tnr(institutionText, { bold: true }),
@@ -134,7 +133,7 @@ function eduDegreePara(edu: ParsedResumeEducation): Paragraph {
 
   return new Paragraph({
     tabStops: [
-      { type: TabStopType.RIGHT, position: TabStopPosition.MAX },
+      { type: TabStopType.RIGHT, position: 9360 },
     ],
     children: [
       tnr(degree),
@@ -178,7 +177,7 @@ function entryHeaderPara(exp: ParsedResumeExperience): Paragraph {
 
   return new Paragraph({
     tabStops: [
-      { type: TabStopType.RIGHT, position: TabStopPosition.MAX },
+      { type: TabStopType.RIGHT, position: 9360 },
     ],
     children: [
       tnr(exp.company, { bold: true }),
@@ -300,7 +299,7 @@ export async function generateKelleyDocx(data: ParsedResume, fileName: string): 
             {
               level: 0,
               format: LevelFormat.BULLET,
-              text: '\u2022',
+              text: '\u00B7',
               alignment: AlignmentType.LEFT,
               style: {
                 paragraph: {
