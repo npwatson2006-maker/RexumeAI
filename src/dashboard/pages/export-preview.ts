@@ -11,6 +11,7 @@ import type { ResumeRow } from '../../lib/supabase/types';
 import type { ParsedResume } from '../../lib/supabase/types';
 import type { User } from '@supabase/supabase-js';
 import { generateKelleyDocx } from '../../lib/templates/kelley';
+import { generatePersonalDocx } from '../../lib/templates/personal';
 import {
   defaultVisibility,
   isVisible,
@@ -18,6 +19,7 @@ import {
   renderKelleyPreviewHTML,
 } from '../../lib/templates/kelley-preview';
 import type { VisibilityState } from '../../lib/templates/kelley-preview';
+import { renderPersonalPreviewHTML } from '../../lib/templates/personal-preview';
 
 // ── Module state ──────────────────────────────────────────────
 
@@ -264,9 +266,8 @@ function renderTogglePanel(parsed: ParsedResume, visibility: VisibilityState): s
 // ── Document preview ──────────────────────────────────────────
 
 function renderDocPreview(templateId: string, parsed: ParsedResume, visibility: VisibilityState): string {
-  if (templateId === 'kelley') {
-    return renderKelleyPreviewHTML(parsed, visibility);
-  }
+  if (templateId === 'kelley') return renderKelleyPreviewHTML(parsed, visibility);
+  if (templateId === 'personal') return renderPersonalPreviewHTML(parsed, visibility);
   return '<p class="preview-unavailable">Preview not available for this template.</p>';
 }
 
@@ -347,6 +348,8 @@ async function handleDownload(): Promise<void> {
     const filtered = applyVisibility(state.parsed, state.visibility);
     if (state.templateId === 'kelley') {
       await generateKelleyDocx(filtered, state.resume.title);
+    } else if (state.templateId === 'personal') {
+      await generatePersonalDocx(filtered, state.resume.title);
     }
   } catch (err) {
     console.error('Export failed:', err);

@@ -3628,3 +3628,124 @@ svg { display: block; }
     padding: 30px 20px;
   }
 }
+
+/* ════════════════════════════════════════════════════════════
+   Personal Template Preview Styles
+   ════════════════════════════════════════════════════════════ */
+
+.personal-doc {
+  font-family: 'Garamond', 'EB Garamond', 'Cormorant Garamond', Georgia, serif;
+  font-size: 10.5pt;
+  color: #000;
+  line-height: 1.2;
+}
+
+/* ── Header ── */
+
+.personal-name {
+  font-size: 35pt;
+  font-weight: bold;
+  text-align: left;
+  line-height: 1.05;
+  margin-bottom: 2pt;
+}
+
+.personal-contact {
+  font-size: 10pt;
+  text-align: left;
+  margin-bottom: 4pt;
+}
+
+.personal-thick-rule {
+  border: none;
+  border-top: 3.5px solid #000;
+  margin: 4pt 0 8pt;
+}
+
+/* ── Section headers ── */
+
+.personal-section-title {
+  font-weight: bold;
+  font-size: 10.5pt;
+  text-transform: uppercase;
+  text-align: left;
+  margin-top: 9pt;
+  margin-bottom: 0;
+}
+
+.personal-thin-rule {
+  border: none;
+  border-top: 0.67px solid #000;
+  margin: 1pt 0 5pt;
+}
+
+/* ── Entry blocks ── */
+
+.personal-entry {
+  margin-bottom: 5pt;
+}
+
+.personal-entry-line1 {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-size: 10.5pt;
+}
+
+.personal-entry-line2 {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-size: 10.5pt;
+  font-style: italic;
+}
+
+/* ── Text helpers ── */
+
+.personal-bold {
+  font-weight: bold;
+}
+
+.personal-italic {
+  font-style: italic;
+}
+
+.personal-regular {
+  font-weight: normal;
+  font-style: normal;
+}
+
+.personal-url-small {
+  font-size: 9pt;
+}
+
+/* ── Bullets ── */
+
+.personal-bullets {
+  list-style: none;
+  margin: 2pt 0 0 0;
+  padding: 0;
+}
+
+.personal-bullets li {
+  font-size: 10pt;
+  padding-left: 18pt;
+  text-indent: -9pt;
+  margin-bottom: 1pt;
+  line-height: 1.3;
+}
+
+.personal-bullets li::before {
+  content: '\2022';
+  font-size: 8pt;
+  margin-right: 6pt;
+  vertical-align: middle;
+}
+
+/* ── Skills line ── */
+
+.personal-skills-line {
+  font-size: 10.5pt;
+  text-align: left;
+  margin-top: 2pt;
+}

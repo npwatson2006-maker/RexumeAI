@@ -31,6 +31,13 @@ const TEMPLATES: TemplateConfig[] = [
     preview: buildPreview({ headerHeight: 44, accent: '#990000' }),
   },
   {
+    id: 'personal',
+    name: 'Personal',
+    description: 'Clean Garamond format with compact margins and left-aligned layout.',
+    available: true,
+    preview: buildPersonalPreview(),
+  },
+  {
     id: 'modern',
     name: 'Modern',
     description: 'Bold header with a two-column layout.',
@@ -107,6 +114,42 @@ function buildPreview(opts: PreviewOptions): string {
     <rect x="8" y="24" width="36" height="4" rx="2" fill="${headerText}" opacity="0.5"/>
     <rect x="8" y="33" width="60" height="3" rx="1.5" fill="${headerText}" opacity="0.35"/>
     ${body}
+  </svg>`;
+}
+
+function buildPersonalPreview(): string {
+  const W = 120, H = 160;
+  const lineColor = '#d1d5db';
+  return `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">
+    <rect width="${W}" height="${H}" rx="4" fill="#f9fafb"/>
+    <!-- Large left-aligned name block -->
+    <rect x="6" y="8" width="70" height="10" rx="2" fill="#111" opacity="0.85"/>
+    <!-- Contact line -->
+    <rect x="6" y="22" width="90" height="3" rx="1.5" fill="${lineColor}"/>
+    <!-- Thick rule under name -->
+    <rect x="6" y="28" width="108" height="2.5" rx="1" fill="#111" opacity="0.7"/>
+    <!-- Section 1 header + thin rule -->
+    <rect x="6" y="35" width="60" height="3.5" rx="1.5" fill="#111" opacity="0.6"/>
+    <rect x="6" y="40" width="108" height="0.8" rx="0.4" fill="#111" opacity="0.4"/>
+    <rect x="6" y="43" width="75" height="3" rx="1.5" fill="${lineColor}"/>
+    <rect x="6" y="49" width="55" height="3" rx="1.5" fill="${lineColor}" opacity="0.7"/>
+    <!-- Section 2 header + thin rule -->
+    <rect x="6" y="57" width="48" height="3.5" rx="1.5" fill="#111" opacity="0.6"/>
+    <rect x="6" y="62" width="108" height="0.8" rx="0.4" fill="#111" opacity="0.4"/>
+    <rect x="6" y="65" width="72" height="3" rx="1.5" fill="${lineColor}"/>
+    <rect x="6" y="71" width="52" height="3" rx="1.5" fill="${lineColor}" opacity="0.7"/>
+    <rect x="12" y="77" width="88" height="2.5" rx="1.2" fill="${lineColor}" opacity="0.6"/>
+    <rect x="12" y="82" width="76" height="2.5" rx="1.2" fill="${lineColor}" opacity="0.5"/>
+    <!-- Section 3 header + thin rule -->
+    <rect x="6" y="90" width="62" height="3.5" rx="1.5" fill="#111" opacity="0.6"/>
+    <rect x="6" y="95" width="108" height="0.8" rx="0.4" fill="#111" opacity="0.4"/>
+    <rect x="6" y="98" width="70" height="3" rx="1.5" fill="${lineColor}"/>
+    <rect x="6" y="104" width="50" height="3" rx="1.5" fill="${lineColor}" opacity="0.7"/>
+    <rect x="12" y="110" width="84" height="2.5" rx="1.2" fill="${lineColor}" opacity="0.6"/>
+    <!-- Section 4 header + thin rule -->
+    <rect x="6" y="118" width="40" height="3.5" rx="1.5" fill="#111" opacity="0.6"/>
+    <rect x="6" y="123" width="108" height="0.8" rx="0.4" fill="#111" opacity="0.4"/>
+    <rect x="6" y="126" width="96" height="3" rx="1.5" fill="${lineColor}" opacity="0.6"/>
   </svg>`;
 }
 
