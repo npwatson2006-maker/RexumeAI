@@ -65,7 +65,9 @@ Return an object matching this exact schema (use null for missing fields, empty 
   ]
 }
 
-IMPORTANT: The "activities" field must capture all extracurricular activities, clubs, organizations, volunteer work, community involvement, and leadership roles that are NOT paid work experience. College students commonly list these under headings like "Activities", "Leadership", "Involvement", "Organizations", "Volunteer", or "Community Service". Do not leave this array empty if such entries exist in the resume.`;
+SECTION MAPPING RULES — read carefully:
+- "experience" captures paid work, internships, co-ops, and part-time jobs.
+- "activities" captures EVERYTHING else that is not paid work: clubs, Greek life, sports teams, student government, honor societies, fraternities/sororities, volunteer work, community service, and any leadership role outside of employment. Map ANY of the following resume headings (and similar variations) into "activities": Activities, Extracurricular Activities, Campus Involvement, Involvement, Leadership, Leadership Experience, Campus Leadership, Organizations, Student Organizations, Community Service, Volunteer Experience, Volunteering, Civic Engagement, Athletics, Sports, Greek Life, Honor Societies, Professional Organizations, Affiliations, Campus Activities, Co-Curricular Activities, Social Impact, Community Involvement, Service, Research (if unpaid/academic). Do NOT leave "activities" empty if any such entries exist in the resume — look carefully for these headings even if they appear under unconventional names.`;
 
 const CORS_HEADERS = {
   'Access-Control-Allow-Origin': '*',
