@@ -41,9 +41,12 @@ Return an object matching this exact schema (use null for missing fields, empty 
       "institution": "string",
       "degree": "string",
       "field_of_study": "string or null",
+      "co_major": "string or null",
+      "location": "string or null",
       "start_date": "string or null",
       "end_date": "string or null",
-      "gpa": "string or null"
+      "gpa": "string or null",
+      "description": "string or null (honor/award bullets as newline-separated text, e.g. 'Deans Scholar\\nMayo Clinic Scholar')"
     }
   ],
   "skills": ["string"],

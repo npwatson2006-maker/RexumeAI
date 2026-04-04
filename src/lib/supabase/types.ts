@@ -82,9 +82,12 @@ export interface ParsedResumeEducation {
   institution: string;
   degree: string;
   field_of_study: string | null;
+  co_major: string | null;
+  location: string | null;
   start_date: string | null;
   end_date: string | null;
   gpa: string | null;
+  description: string | null; // honor/award bullets as newline-separated text
 }
 
 export interface ParsedResumeCertification {
