@@ -18,6 +18,7 @@ import { renderAiTailor } from './pages/ai-tailor';
 import { renderAiAts } from './pages/ai-ats';
 import { renderResumes } from './pages/resumes';
 import { renderExport } from './pages/export';
+import { renderSettings } from './pages/settings';
 import { renderPlaceholder } from './pages/placeholders';
 import type { User } from '@supabase/supabase-js';
 
@@ -98,6 +99,8 @@ async function navigate(pageId: PageId, subRoute: string | null = null): Promise
     } else {
       await renderAiTools(container, currentUser!);
     }
+  } else if (pageId === 'settings') {
+    await renderSettings(container, currentUser!);
   } else {
     renderPlaceholder(container, pageId);
   }

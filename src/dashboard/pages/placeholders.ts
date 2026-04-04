@@ -3,7 +3,7 @@
  * Each page shows a "Coming Soon" state with the right icon and label.
  */
 
-type PageId = 'ai-tools' | 'settings' | 'help';
+type PageId = 'ai-tools' | 'help';
 
 interface PageConfig {
   icon: string;
@@ -16,11 +16,6 @@ const PAGES: Record<PageId, PageConfig> = {
     icon: '✨',
     title: 'AI Tools',
     description: 'AI-powered resume review, rewriting, and job tailoring. Coming soon.',
-  },
-  'settings': {
-    icon: '⚙️',
-    title: 'Profile & Settings',
-    description: 'Manage your account details, preferences, and billing. Coming soon.',
   },
   'help': {
     icon: '❓',
