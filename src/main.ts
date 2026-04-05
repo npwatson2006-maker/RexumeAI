@@ -33,7 +33,7 @@ function createAuthModal(): void {
       <button class="auth-close" aria-label="Close">&times;</button>
 
       <div class="auth-logo">
-        <img src="/RexumeAI LOGO.jpeg" alt="RexumeAI" />
+        <img src="/RexumeNewLogo-Photoroom.png" alt="RexumeAI" />
         <span>RexumeAI</span>
       </div>
 
